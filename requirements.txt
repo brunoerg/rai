@@ -1,0 +1,4 @@
+cryptography==2.6.1
+ed25519-blake2b==1.4
+nanolib==0.3
+py-essentials==1.4.12
