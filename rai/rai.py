@@ -9,7 +9,7 @@ from nanolib import generate_seed
 from nanolib import generate_account_private_key
 from nanolib import Block
 import ed25519_blake2b
-import utils
+from utils import decoder, encodWalletMensg
 import binascii
 
 def generate_shared_secret(priv_key, address):
@@ -28,9 +28,9 @@ def save_message_in_address(message):
             for i in range(32 - len(m)):
                 mess.append(" ")
             mes_str = ''.join(mess)
-            message_encoded.append(utils.encodWalletMensg(mes_str))
+            message_encoded.append(encodWalletMensg(mes_str))
         else:
-            message_encoded.append(utils.encodWalletMensg(m))
+            message_encoded.append(encodWalletMensg(m))
     return message_encoded
 
 def address_to_publickey_bytes(address):
@@ -42,13 +42,13 @@ def address_to_publickey_bytes(address):
         return False
     prefix = '1111'
     address = prefix + address[8:]
-    address = utils.decoder(address)
+    address = decoder(address)
     address = bytearray(address)
     for i in range(3):
         del address[i]
     return bytes(address)
 
-# Algorithms: sha1, sha256, sha512, md5
+# sha1, sha256, sha512, md5
 def file_to_address(file_path, algorithm):
     hsh = hs.fileChecksum(file_path, algorithm)
     return save_message_in_address(hsh)
