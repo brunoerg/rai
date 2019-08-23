@@ -8,7 +8,8 @@ DECODE_TRANS = str.maketrans(CUSTOM_ALPHABET, STANDARD_ALPHABET)
 
 
 def encoder(input):
-  return base64.b32encode(bytearray(input, 'utf-8')).decode('utf-8').translate(ENCODE_TRANS)
+    return base64.b32encode(bytearray(input,
+                            'utf-8')).decode('utf-8').translate(ENCODE_TRANS)
 
 
 def encodecheck(input):
@@ -17,7 +18,7 @@ def encodecheck(input):
 
 
 def decoder(input):
-  return base64.b32decode(input.translate(DECODE_TRANS))
+    return base64.b32decode(input.translate(DECODE_TRANS))
 
 
 def encodWalletMensg(mens):
@@ -31,7 +32,3 @@ def encodWalletMensg(mens):
     chekInvCod = encodecheck(invchek)
     return 'xrb_' + mensExpCod + chekInvCod
 
-
-def decodWalletMensg(wallet):
-    mensCod = 'dxho' + wallet[4:-8]
-    return decoder(mensCod)[3:]

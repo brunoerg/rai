@@ -1,20 +1,34 @@
 from cryptography.hazmat.primitives.asymmetric.x25519 import X25519PrivateKey
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric import x25519
+from cryptography.hazmat.primitives.kdf.hkdf import HKDF
+from cryptography.hazmat.primitives import hashes
+from cryptography.hazmat.backends import default_backend
 from py_essentials import hashing as hs
 import ed25519_blake2b
-from utils import decoder, encodWalletMensg
+from .utils import decoder, encodWalletMensg
 import hashlib
 
 
-def generate_shared_secret(priv_key, address):
-    return priv_key.exchange(load_public_key_from_bytes_x25519(address_to_publickey_bytes(address)))
+def generate_shared_secret(priv_key_bytes, address):
+    priv_key = load_private_key_from_bytes(priv_key_bytes)
+    return priv_key.exchange(load_public_key_from_bytes_x25519
+                             (address_to_publickey_bytes(address)))
+
+
+def derivate_shared_key(shared_key, message):
+    return HKDF(
+        algorithm=hashes.BLAKE2b,
+        length=32,
+        salt=None,
+        info=bytes(message),
+        backend=default_backend()
+    ).derive(shared_key)
 
 
 def save_message_in_address(message):
     message_len = len(message.encode('utf-8'))
     message_split = [message[i:i+32] for i in range(0, message_len, 32)]
-    print(message_split)
     message_encoded = []
     for m in message_split:
         if len(m) < 32:
@@ -28,6 +42,11 @@ def save_message_in_address(message):
         else:
             message_encoded.append(encodWalletMensg(m))
     return message_encoded
+
+
+def get_message_from_address(address):
+    mens_cod = 'dxho' + address[4:-8]
+    return decoder(mens_cod)[3:]
 
 
 def address_to_publickey_bytes(address):
@@ -62,11 +81,16 @@ def generate_x25519_private_public_key():
 
 
 def get_bytes_from_privkey_object(priv_key):
-    return priv_key.priv_bytes(
-        encoding=serialization.Encoding.Raw,
-        format=serialization.PrivateFormat.Raw,
-        encryption_algorithm=serialization.NoEncryption()
-    )
+    if isinstance(priv_key, X25519PrivateKey):
+        return priv_key.priv_bytes(
+            encoding=serialization.Encoding.Raw,
+            format=serialization.PrivateFormat.Raw,
+            encryption_algorithm=serialization.NoEncryption()
+        )
+    elif isinstance(priv_key, ed25519_blake2b.SigningKey):
+        return priv_key.to_bytes()
+    else:
+        return False
 
 
 def load_public_key_from_bytes_x25519(pub_bytes):
@@ -74,7 +98,8 @@ def load_public_key_from_bytes_x25519(pub_bytes):
 
 
 def load_public_key_bytes_from_addr_x25519(address):
-    return x25519.X25519PublicKey.from_public_bytes(address_to_publickey_bytes(address))
+    return x25519.X25519PublicKey.from_public_bytes(
+                    address_to_publickey_bytes(address))
 
 
 def get_pair_ed_key_from_seed(seed):
