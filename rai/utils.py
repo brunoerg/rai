@@ -12,7 +12,7 @@ def encoder(input):
                             'utf-8')).decode('utf-8').translate(ENCODE_TRANS)
 
 
-def encodecheck(input):
+def encode_check(input):
     w = bytearray.fromhex(input)
     return base64.b32encode(w).decode('utf-8').translate(ENCODE_TRANS)
 
@@ -21,7 +21,7 @@ def decoder(input):
     return base64.b32decode(input.translate(DECODE_TRANS))
 
 
-def encodWalletMensg(mens):
+def encode_wallet_mensg(mens):
     mensExp = '   ' + str(mens)
     mensExpCod = encoder(mensExp)[4:]
     mensByte = str(mens).encode('utf-8')
@@ -29,6 +29,6 @@ def encodWalletMensg(mens):
     p.update(mensByte)
     checksum = p.hexdigest()
     invchek = "".join(reversed([checksum[i:i+2] for i in range(0, len(checksum), 2)]))
-    chekInvCod = encodecheck(invchek)
+    chekInvCod = encode_check(invchek)
     return 'xrb_' + mensExpCod + chekInvCod
 

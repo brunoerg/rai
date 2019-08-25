@@ -6,7 +6,7 @@ from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.backends import default_backend
 from py_essentials import hashing as hs
 import ed25519_blake2b
-from .utils import decoder, encodWalletMensg
+from .utils import decoder, encode_wallet_mensg
 import hashlib
 
 
@@ -38,9 +38,9 @@ def save_message_in_address(message):
             for i in range(32 - len(m)):
                 mess.append(" ")
             mes_str = ''.join(mess)
-            message_encoded.append(encodWalletMensg(mes_str))
+            message_encoded.append(encode_wallet_mensg(mes_str))
         else:
-            message_encoded.append(encodWalletMensg(m))
+            message_encoded.append(encode_wallet_mensg(m))
     return message_encoded
 
 
@@ -74,7 +74,7 @@ def load_private_key_from_bytes(priv_bytes):
     return x25519.X25519PrivateKey.from_private_bytes(priv_bytes)
 
 
-def generate_x25519_private_public_key():
+def generate_x25519_pair_key():
     priv_key = X25519PrivateKey.generate()
     pub_key = priv_key.public_key()
     return priv_key, pub_key
