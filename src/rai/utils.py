@@ -31,4 +31,3 @@ def encode_wallet_mensg(mens):
     invchek = "".join(reversed([checksum[i:i+2] for i in range(0, len(checksum), 2)]))
     chekInvCod = encode_check(invchek)
     return 'xrb_' + mensExpCod + chekInvCod
-
