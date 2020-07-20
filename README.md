@@ -14,7 +14,3 @@ The name of the repository is a tribute to the RaiBlocks (previous name of Nano)
 * Generate X25519 pair keys
 * Get ED25519 keys from a seed
 * Sign message from a seed
-
-## Instalation
-
-Soon
